@@ -16,6 +16,10 @@ Platform level1Platforms[] = {
     {{50, 300, 50, 200}, true, GRAY},  {{300, 300, 100, 10}, true, GRAY},
     {{500, 200, 100, 10}, true, GRAY}, {{500, 400, 100, 10}, true, GRAY},
 };
+
+Spike level1Spikes[] = {
+    {{100, 500}, {150, 500}, {125, 475}},
+};
 const Level levels[] = {
     {
         (Vector2){50.0f, 280.0f},
@@ -28,6 +32,6 @@ const Level levels[] = {
         (Vector2){10.0f, 200.0f},
         level1Platforms,
         sizeof(level1Platforms) / sizeof(level1Platforms[0]),
-        {},
-        0,
+        level1Spikes,
+        sizeof(level1Spikes) / sizeof(level1Spikes[0]),
     }};

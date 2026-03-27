@@ -48,6 +48,7 @@ void CheckPlatformCollisions(Player *player, Platform *platforms,
 void CheckSpikeCollisions(Player *player, Spike *spikes, int spikesLength,
                           float delta) {
   for (size_t i = 0; i < spikesLength; i++) {
+    // WARN: This collision detection is not that good
     if (CheckCollisionPointTriangle(player->position, spikes[i].a, spikes[i].b,
                                     spikes[i].c)) {
       player->health = 0.0f;
