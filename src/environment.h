@@ -5,7 +5,7 @@
 
 typedef struct EnvItem {
   Rectangle rect;
-  int blocking;
+  bool blocking;
   Color color;
 } EnvItem;
 

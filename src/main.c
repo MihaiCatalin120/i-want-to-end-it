@@ -3,6 +3,7 @@
 #include "camera.h"
 #include "config.h"
 #include "player.h"
+#include "ui.h"
 
 #include <stdio.h>
 
@@ -12,23 +13,17 @@ int main() {
   const char *appPath = GetApplicationDirectory();
 
   Player player = {0};
-  player.position = (Vector2){400, 280};
-  player.size = (Vector2){40.0f, 40.0f};
-  player.speed = 0;
-  player.canJump = false;
-  EnvItem envItems[] = {{{0, 400, 800, 200}, 1, GRAY},
-                        {{200, 200, 400, 10}, 1, GRAY},
-                        {{100, 300, 100, 10}, 1, GRAY},
-                        {{600, 300, 100, 10}, 1, GRAY}};
+  InitPlayer(&player);
+
+  EnvItem envItems[] = {{{0, 400, 800, 200}, true, GRAY},
+                        {{200, 200, 400, 10}, true, GRAY},
+                        {{100, 300, 100, 10}, true, GRAY},
+                        {{600, 300, 100, 10}, true, GRAY}};
 
   int envItemsLength = sizeof(envItems) / sizeof(envItems[0]);
 
   Camera2D camera = {0};
-  Vector2 screenCenter = {WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f};
-  camera.target = screenCenter;
-  camera.offset = screenCenter;
-  camera.rotation = 0.0f;
-  camera.zoom = 1.0f;
+  InitCamera(&camera);
 
   SetTargetFPS(60);
   while (!WindowShouldClose()) {
@@ -51,7 +46,11 @@ int main() {
     Rectangle playerRect = {player.position.x - player.size.x / 2,
                             player.position.y - player.size.y, player.size.x,
                             player.size.y};
-    DrawRectangleRec(playerRect, RED);
+    DrawRectangleRec(playerRect, GetPlayerColor(&player));
+
+    if (player.health == 0.0f) {
+      DrawEndRoundBox("You died", "Press ENTER to advance", 64, 12, GREEN);
+    }
 
     EndMode2D();
 
