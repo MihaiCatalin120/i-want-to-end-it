@@ -9,4 +9,11 @@ typedef struct EnvItem {
   Color color;
 } EnvItem;
 
+typedef struct Level {
+  Vector2 playerStartPos;
+  EnvItem *envItems;
+  int envItemsLength;
+} Level;
+
+extern const Level levels[];
 #endif

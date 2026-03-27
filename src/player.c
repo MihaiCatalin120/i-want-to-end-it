@@ -28,15 +28,14 @@ void CheckEnvironmentCollisions(Player *player, EnvItem *envItems,
         ei->rect.x + ei->rect.width >= p->x && ei->rect.y >= p->y &&
         ei->rect.y <= p->y + player->speed * delta) {
       *hitObstacle = true;
-      if (player->speed * delta > 0)
-        printf("HIT OBSTACLE with %f speed\n", player->speed * delta);
+
       if (player->speed * delta > FALL_DAMAGE_THRESHOLD) {
         player->health -=
             (player->speed * delta - FALL_DAMAGE_THRESHOLD) * 10.0f;
         if (player->health < 0.0f)
           player->health = 0.0f;
-        printf("Owie: hp is now %f\n", player->health);
       }
+
       player->speed = 0.0f;
       p->y = ei->rect.y;
       break;

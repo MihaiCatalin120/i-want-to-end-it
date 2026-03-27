@@ -2,6 +2,7 @@
 
 #include "camera.h"
 #include "config.h"
+#include "environment.h"
 #include "player.h"
 #include "ui.h"
 
@@ -12,15 +13,13 @@ int main() {
   InitAudioDevice();
   const char *appPath = GetApplicationDirectory();
 
+  size_t currentLevel = 0;
   Player player = {0};
   InitPlayer(&player);
 
-  EnvItem envItems[] = {{{0, 400, 800, 200}, true, GRAY},
-                        {{200, 200, 400, 10}, true, GRAY},
-                        {{100, 300, 100, 10}, true, GRAY},
-                        {{600, 300, 100, 10}, true, GRAY}};
-
-  int envItemsLength = sizeof(envItems) / sizeof(envItems[0]);
+  player.position = levels[currentLevel].playerStartPos;
+  EnvItem *envItems = levels[currentLevel].envItems;
+  int envItemsLength = levels[currentLevel].envItemsLength;
 
   Camera2D camera = {0};
   InitCamera(&camera);
@@ -32,8 +31,19 @@ int main() {
 
     UpdatePlayer(&player, envItems, envItemsLength, deltaTime);
 
-    UpdateCameraCenter(&camera, &player, deltaTime, WINDOW_WIDTH,
-                       WINDOW_HEIGHT);
+    if (player.health == 0.0f) {
+      if (IsKeyPressed(KEY_ENTER)) {
+        currentLevel++;
+        player.health = 100.0f;
+
+        // TODO: magic number - number of levels
+        currentLevel = currentLevel % 2;
+
+        player.position = levels[currentLevel].playerStartPos;
+        envItems = levels[currentLevel].envItems;
+        envItemsLength = levels[currentLevel].envItemsLength;
+      }
+    }
 
     BeginDrawing();
     ClearBackground(LIGHTGRAY);
