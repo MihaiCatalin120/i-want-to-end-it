@@ -1,5 +1,6 @@
 #include "player.h"
 #include "config.h"
+#include "raylib.h"
 #include "raymath.h"
 #include <stdio.h>
 
@@ -18,15 +19,16 @@ Color GetPlayerColor(Player *player) {
   return result;
 }
 
-void CheckEnvironmentCollisions(Player *player, EnvItem *envItems,
-                                int envItemsLength, bool *hitObstacle,
-                                float delta) {
-  for (int i = 0; i < envItemsLength; i++) {
-    EnvItem *ei = envItems + i;
+void CheckPlatformCollisions(Player *player, Platform *platforms,
+                             int platformsLength, bool *hitObstacle,
+                             float delta) {
+  for (int i = 0; i < platformsLength; i++) {
+    Platform *platform = platforms + i;
     Vector2 *p = &(player->position);
-    if (ei->blocking && ei->rect.x <= p->x &&
-        ei->rect.x + ei->rect.width >= p->x && ei->rect.y >= p->y &&
-        ei->rect.y <= p->y + player->speed * delta) {
+    if (platform->blocking && platform->rect.x <= p->x &&
+        platform->rect.x + platform->rect.width >= p->x &&
+        platform->rect.y >= p->y &&
+        platform->rect.y <= p->y + player->speed * delta) {
       *hitObstacle = true;
 
       if (player->speed * delta > FALL_DAMAGE_THRESHOLD) {
@@ -37,14 +39,24 @@ void CheckEnvironmentCollisions(Player *player, EnvItem *envItems,
       }
 
       player->speed = 0.0f;
-      p->y = ei->rect.y;
+      p->y = platform->rect.y;
       break;
     }
   }
 }
 
-void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength,
-                  float delta) {
+void CheckSpikeCollisions(Player *player, Spike *spikes, int spikesLength,
+                          float delta) {
+  for (size_t i = 0; i < spikesLength; i++) {
+    if (CheckCollisionPointTriangle(player->position, spikes[i].a, spikes[i].b,
+                                    spikes[i].c)) {
+      player->health = 0.0f;
+      return;
+    }
+  }
+}
+
+void UpdatePlayer(Player *player, const Level *level, float delta) {
   if (player->health == 0.0f)
     return;
 
@@ -62,8 +74,10 @@ void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength,
 
   bool hitObstacle = false;
 
-  CheckEnvironmentCollisions(player, envItems, envItemsLength, &hitObstacle,
-                             delta);
+  CheckPlatformCollisions(player, level->platforms, level->platformsLength,
+                          &hitObstacle, delta);
+
+  CheckSpikeCollisions(player, level->spikes, level->spikesLength, delta);
 
   if (!hitObstacle) {
     player->position.y += player->speed * delta;

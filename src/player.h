@@ -16,7 +16,6 @@ void InitPlayer(Player *player);
 
 Color GetPlayerColor(Player *player);
 
-void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength,
-                  float delta);
+void UpdatePlayer(Player *player, const Level *level, float delta);
 
 #endif

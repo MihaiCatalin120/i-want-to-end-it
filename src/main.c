@@ -18,8 +18,6 @@ int main() {
   InitPlayer(&player);
 
   player.position = levels[currentLevel].playerStartPos;
-  EnvItem *envItems = levels[currentLevel].envItems;
-  int envItemsLength = levels[currentLevel].envItemsLength;
 
   Camera2D camera = {0};
   InitCamera(&camera);
@@ -29,7 +27,7 @@ int main() {
 
     float deltaTime = GetFrameTime();
 
-    UpdatePlayer(&player, envItems, envItemsLength, deltaTime);
+    UpdatePlayer(&player, &levels[currentLevel], deltaTime);
 
     if (player.health == 0.0f) {
       if (IsKeyPressed(KEY_ENTER)) {
@@ -40,8 +38,6 @@ int main() {
         currentLevel = currentLevel % 2;
 
         player.position = levels[currentLevel].playerStartPos;
-        envItems = levels[currentLevel].envItems;
-        envItemsLength = levels[currentLevel].envItemsLength;
       }
     }
 
@@ -50,8 +46,15 @@ int main() {
 
     BeginMode2D(camera);
 
-    for (int i = 0; i < envItemsLength; i++)
-      DrawRectangleRec(envItems[i].rect, envItems[i].color);
+    for (int i = 0; i < levels[currentLevel].platformsLength; i++)
+      DrawRectangleRec(levels[currentLevel].platforms[i].rect,
+                       levels[currentLevel].platforms[i].color);
+
+    for (int i = 0; i < levels[currentLevel].spikesLength; i++) {
+      DrawTriangle(levels[currentLevel].spikes[i].a,
+                   levels[currentLevel].spikes[i].b,
+                   levels[currentLevel].spikes[i].c, GRAY);
+    }
 
     Rectangle playerRect = {player.position.x - player.size.x / 2,
                             player.position.y - player.size.y, player.size.x,
