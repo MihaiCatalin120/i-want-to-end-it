@@ -13,6 +13,7 @@ int main() {
 
   Player player = {0};
   player.position = (Vector2){400, 280};
+  player.size = (Vector2){40.0f, 40.0f};
   player.speed = 0;
   player.canJump = false;
   EnvItem envItems[] = {{{0, 400, 800, 200}, 1, GRAY},
@@ -47,8 +48,9 @@ int main() {
     for (int i = 0; i < envItemsLength; i++)
       DrawRectangleRec(envItems[i].rect, envItems[i].color);
 
-    Rectangle playerRect = {player.position.x - 20, player.position.y - 40,
-                            40.0f, 40.0f};
+    Rectangle playerRect = {player.position.x - player.size.x / 2,
+                            player.position.y - player.size.y, player.size.x,
+                            player.size.y};
     DrawRectangleRec(playerRect, RED);
 
     EndMode2D();
